@@ -135,13 +135,11 @@ for j in glob.glob(arquivo1):
     v1 = np.array(v1,np.float32)
 
 
-
 #/----FIM ----/
 
-    labels2 = np.array([-1,-1,-1,-1,-1,-1,1,1,1,-1,-1], np.float32)
+    labels2 = np.array([-1,-1,-1,-1,-1,-1,1,1,-1,-1], np.float32)
     results = clf.predict(np.array(v1, np.float32))
     #print(j,results)
-
     print(results)
 
 
@@ -155,7 +153,6 @@ for j in glob.glob(arquivo1):
 
 print("Hits:",acertos)
 print("Misses:",erros)
-
 
 # ------ REDE FIM -------#
 
