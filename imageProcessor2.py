@@ -2,17 +2,17 @@
 Autor: João Guilherme do Nascimento Teles
 """
 import glob
+import math
 
 import cv2
 import dlib
-import numpy as np
-import scipy.ndimage
 
 dataBase = 'C:/Users/Windows 10/PycharmProjects/Face-Recognition/DATA/90/*.jpg'
 imageTitle = []
 labels = []
 dataMatrix = []
 counter = 0
+vecImages = []
 
 detector = dlib.get_frontal_face_detector()  # Detector facial
 clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
@@ -35,30 +35,34 @@ for image in glob.glob(dataBase):
         labels.append(-1)
         counter = counter + 1
     labels = labels
+    vecCoordinates = []
+    vecDetections = []
+
     for k, d in enumerate(detections):  # For each detected face
         shape = predictor(clahe_image, d)  # Get coordinates
-        for i in range(1, 68):  # There are 68 landmark points on each face
+        for i in range(0, 67):  # There are 68 landmark points on each face
             cv2.circle(frame, (shape.part(i).x, shape.part(i).y), 1, (0, 255, 0),
                        thickness=-1)  # For each point, draw a red circle with thickness2 on the original frame
+            vecDetections.append([shape.part(i).x, shape.part(i).y])
 
-    vecx = []
-    vecy = []
-    for i in range(1, 68):
-        vecx.append(shape.part(i).x)
-        vecy.append(shape.part(i).y)
+        vecCoordinates.append(vecDetections)
 
-    minx = np.amin(vecx)
-    miny = np.amin(vecy)
-    maxx = np.amax(vecx)
-    maxy = np.amax(vecy)
+    vecImages.append(vecCoordinates)
 
-    clahe_image = clahe_image[miny:maxy, minx:maxx]
+euclidianDistVec = []
+distVectors = []
 
-    zoom = scipy.ndimage.zoom(clahe_image, ((100) / (maxy - miny), (100) / (maxx - minx)), order=0)
+for i in range(0, len(vecImages)):
+    for j in range(0, 67):
+        for a in range(0, 67):
+            euclidianDist = math.sqrt(((vecImages[i][0][j][0] - vecImages[i][0][a][0]) ** 2 + (
+                    vecImages[i][0][j][1] - vecImages[i][0][a][1]) ** 2))
+            euclidianDistVec.append(euclidianDist)
 
-    v = np.resize(zoom, (1, 100 * 100))
-    v = np.array(v, np.float32)
-
-    dataMatrix.append(v[0])
-
-dataMatrix = np.array(dataMatrix, np.float32)
+# print(euclidianDistVec)
+length = len(euclidianDistVec)
+n = 90
+for i in range(n):
+    start = int(i * length / n)
+    end = int((i + 1) * length / n)
+    dataMatrix.append(euclidianDistVec[start:end])

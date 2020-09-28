@@ -9,8 +9,10 @@ min_max_scaler = preprocessing.MinMaxScaler()
 data = min_max_scaler.fit_transform(imageProcessor.dataMatrix)
 
 ModelAnn = MLPClassifier()
-parameters = {'solver': ('lbfgs', 'adam'), 'alpha': [1e-5, 1, 1e5],
-              'hidden_layer_sizes': [(25, 50, 10), (50, 50, 10), (100, 100, 10)]}
+parameters = {'solver': ['adam'], 'alpha': [1e-5, 1e-3, 1e-1],
+              'hidden_layer_sizes': [(25, 50, 10), (50, 50, 10), (100, 100, 10), (100, 50, 10), (50, 10)],
+              'random_state': [1], 'activation': ['relu', 'logistic']}
+
 ann = GridSearchCV(ModelAnn, parameters, cv=10)
 ann.fit(data, imageProcessor.labels)
 

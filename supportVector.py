@@ -7,9 +7,12 @@ import imageProcessor
 
 min_max_scaler = preprocessing.MinMaxScaler()
 data = min_max_scaler.fit_transform(imageProcessor.dataMatrix)
+print(data)
+print(imageProcessor.labels)
+
 ModelSvm = svm.SVC()
-parameters = {'kernel': ('linear', 'rbf', 'poly'), 'C': [10 ** -6, 10, 10 ** 6], 'degree': [3, 5],
-              'gamma': [10 ** -3, 10, 10 ** 3]}
+parameters = {'kernel': ('linear', 'rbf', 'poly'), 'C': [10 ** -6, 1, 10 ** 6], 'degree': [2, 3, 4, 5],
+              'gamma': [10 ** -3, 10, 10 ** 3], 'random_state': [1]}
 clf = GridSearchCV(ModelSvm, parameters, cv=10)
 clf.fit(data, imageProcessor.labels)
 
